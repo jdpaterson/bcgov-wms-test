@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      let map;
+      let urlBounds;
+      let urlLink;
+
+      const baseUrl = 'https://openmaps.gov.bc.ca/geo/pub/WHSE_FOREST_TENURE.FTEN_REC_DTAILS_CLOSURES_SV/ows?service=WMS&VERSION=1.3.0';
+      const request = '&request=GetMap';
+      const layers = '&LAYERS=WHSE_FOREST_TENURE.FTEN_REC_DTAILS_CLOSURES_SV';
+      const format = '&FORMAT=image/jpeg';
+      const otherStuff = '&CRS=EPSG:4326&WIDTH=300&HEIGHT=300&TRANSPARENT=TRUE';
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 55, lng: -125},
+          zoom: 8
+        });
+        map.addListener('tilesloaded', () => {
+          const bounds = map.getBounds();
+          const south = bounds.getSouthWest().lat();
+          const west = bounds.getSouthWest().lng();
+          const north = bounds.getNorthEast().lat();
+          const east = bounds.getNorthEast().lng();
+          urlBounds = '&BBOX=' + south + ',' + west + ',' + north + ',' + east;
+          urlLink = baseUrl + request + layers + format + urlBounds + otherStuff;
+          console.log(urlLink);
+        })
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmzYe9IsDUx0ysryRGLrf_mU57SjD1Chw&callback=initMap"
+    async defer></script>
+  </body>
+</html>
